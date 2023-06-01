@@ -1,5 +1,9 @@
 package serv.co.documentservice.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import serv.co.documentservice.repository.DocRepository;
@@ -13,9 +17,12 @@ import java.util.UUID;
 @RequestMapping(value = "/docudb")
 public class DocController {
     private final DocRepository repository;
+    private final MongoTemplate mongoTemplate;
 
-    public DocController(DocRepository repository) {
+
+    public DocController(DocRepository repository, MongoTemplate mongoTemplate) {
         this.repository = repository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @PostMapping
@@ -23,23 +30,32 @@ public class DocController {
     public Doc creatDoc(Doc doc){
         return repository.save(doc);
     }
-    @GetMapping
+    @GetMapping("/print")
      public void printAllDocs() {
          repository.findAll().forEach(System.out::println);
     }
-    @GetMapping
-    public List<Doc> getAllDoc(){
-        return repository.findAll();
-    }
+
+
     @GetMapping("/{id}")
     public Optional<Doc> getDocId(@PathVariable String id){
         return repository.findById(id);
     }
 
+   /* @GetMapping
+    public List<Doc> getAllDoc(){
+        return repository.findAll();
+    }
     @GetMapping("/{name}")
     public List<Doc> getDocName(@PathVariable String name){
         return repository.getDocByName(name);
-    }
+    }*/
+   @GetMapping("/all")
+   public List<Doc> getAllDocuments() {
+
+       return repository.findAll();
+   }
+   
+
 
     /*@PutMapping
     public Docum modifyDoc(Docum doc){

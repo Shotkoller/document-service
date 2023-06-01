@@ -1,6 +1,7 @@
 package serv.co.documentservice.service;
 
 
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import serv.co.documentservice.model.Doc;
 import serv.co.documentservice.repository.DocRepository;
@@ -11,9 +12,13 @@ import java.util.List;
 
 public class DocService {
     private serv.co.documentservice.repository.DocRepository repository ;
+    private MongoTemplate mongoTemplate;
+
 
     // Constructor injection
-    public DocService(DocRepository docRepository) {
+    public void DocumentService(DocRepository repository, MongoTemplate mongoTemplate) {
+        this.repository = repository;
+        this.mongoTemplate = mongoTemplate;
     }
     public Doc addDoc(Doc doc){
         repository.save(doc);

@@ -2,6 +2,7 @@ package serv.co.documentservice.model;
 
 import lombok.*;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,8 +17,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 public class Doc {
 
-    /*@Id
-    private String id;*/
+    @Id
+    private String id;
     /*@Id
     @org.springframework.data.mongodb.core.mapping.Field("_id")
     private String id;
