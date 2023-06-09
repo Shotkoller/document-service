@@ -1,5 +1,6 @@
 package serv.co.documentservice;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +10,8 @@ import serv.co.documentservice.connection.MongoConfig;
 import serv.co.documentservice.connection.MyConfiguration;
 import serv.co.documentservice.controller.DocController;
 import serv.co.documentservice.repository.DocRepository;
+
+import java.time.LocalDateTime;
 
 
 @SpringBootApplication
@@ -23,17 +26,26 @@ public class DocumentServiceApplication {
       return args -> {
            restConfiguration.repositoryRestConfigurer();
           System.out.println("Application started and running !!!!!!!!!!! ");
-    // You can add any additional initialization logic here
-          docController.creatDoc(docController.createRandomDoc());
-          docController.creatDoc(docController.createRandomDoc());
-          docController.creatDoc(docController.createRandomDoc());
+          // You can add any additional initialization logic here
+          /* docController.createDoc();
+          Thread.sleep(5000); // Delay the execution for 5 seconds
+          docController.createDoc();
+          Thread.sleep(5000);
+          docController.createDoc();*/
+
 
           docController.printAllDocs();
-        //     Keep the application running indefinitely
-          //  synchronized (DocumentServiceApplication.class) {
-            //    DocumentServiceApplication.class.wait();
-           // }
+          System.out.println("Application started and running !!!!!!!!!!! ");
+          System.out.println("Application started and running !!!!!!!!!!! ");
 
-       };
+
+
+          LocalDateTime creationTime = LocalDateTime.parse("2023-06-09T15:25:54.384");
+          docController.getDocsByCreationTime(creationTime);
+          docController.getDocByDocuName("Documentccf164");
+
+
+
+      };
     }
 }

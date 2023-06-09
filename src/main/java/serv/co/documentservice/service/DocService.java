@@ -33,18 +33,18 @@ public class DocService {
     public List<Doc> getDocByName(String name){
         return repository.getDocByName(name);
     }
-    /*  public Docum updateDoc(Docum docRequest){
-          Docum existingDoc = repository.findById(docRequest.getId()).get();
+      public Doc updateDoc(Doc docRequest){
+          Doc existingDoc = repository.findById(docRequest.getId()).get();
           existingDoc.setName(docRequest.getName());
           existingDoc.setDescription(docRequest.getDescription());
-          existingDoc.setDocx(docRequest.getDocx());
-          existingDoc.setChecksum(docRequest.getDocx());
+
           return repository.save(existingDoc) ;
 
-      }*/
+      }
     public String deleteDocById (String id){
         repository.deleteById(id);
         return id+"was deleted";
     }
+
 
 };

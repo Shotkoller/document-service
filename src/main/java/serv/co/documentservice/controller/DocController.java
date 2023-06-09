@@ -1,14 +1,14 @@
 package serv.co.documentservice.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.IndexInfo;
-import org.springframework.data.mongodb.core.index.IndexOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import serv.co.documentservice.model.DocMetadata;
+import serv.co.documentservice.model.Image;
 import serv.co.documentservice.repository.DocRepository;
 import serv.co.documentservice.model.Doc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,11 +25,31 @@ public class DocController {
         this.mongoTemplate = mongoTemplate;
     }
 
-    @PostMapping
+    @PostMapping("/create/doc")
     @ResponseStatus(HttpStatus.CREATED)
-    public Doc creatDoc(Doc doc){
-        return repository.save(doc);
+    public String createDoc() {
+        Doc doc = Doc.builder()
+                .name("Document" + generateRandomString())
+                .description("Description" + generateRandomString())
+                .build();
+
+
+        DocMetadata metadata = new DocMetadata();
+        metadata.setDocuName(doc.getName());
+        metadata.setCreationTime(LocalDateTime.now()); // Set the creation time to the current time
+        // Set any additional metadata fields you require
+
+        doc.setMetadata(metadata);
+
+        Image image=new Image();
+        image.setId("id"+ generateRandomString());
+        doc.setImage(image);
+
+        repository.save(doc);
+
+        return "Document validé";
     }
+
     @GetMapping("/print")
      public void printAllDocs() {
          repository.findAll().forEach(System.out::println);
@@ -54,13 +74,38 @@ public class DocController {
 
        return repository.findAll();
    }
-   
+    @GetMapping("/DocMetadata/{creationTime}")
+    public void getDocsByCreationTime(@RequestParam("creationTime") LocalDateTime creationTime) {
+        Optional<Doc> docOptional = repository.findByMetadataCreationTime(creationTime);
+
+        if (docOptional.isPresent()) {
+            Doc doc = docOptional.get();
+            // Print the doc details
+            System.out.println("Doc found with creationTime: " + creationTime);
+            System.out.println(doc.toString());        }
+        else {
+            System.out.println("No Doc found with creationTime: " + creationTime);
+        }
+    }
+    @GetMapping("/DocMetadata/{docuName}")
+    public void getDocByDocuName(@PathVariable("docuName") String docuName) {
+        Optional<Doc> docOptional = repository.findByMetadataDocuName(docuName);
+
+        if (docOptional.isPresent()) {
+            Doc doc = docOptional.get();
+            System.out.println("Doc found with docuName: " + docuName);
+            System.out.println(doc.toString());
+        } else {
+            System.out.println("No Doc found with docuName: " + docuName);
+        }
+    }
 
 
-    /*@PutMapping
-    public Docum modifyDoc(Docum doc){
+    @PutMapping
+    public Doc modifyDoc(Doc doc){
         return repository.save(doc);
-    }*/
+
+    }
 
     @DeleteMapping("/{id}")
     public String deleteDocId(@PathVariable String id){
@@ -68,17 +113,12 @@ public class DocController {
         return "deleted doc id" + id;
     }
 
-    @PutMapping
-    public Doc createRandomDoc(){
-        Doc doc=new Doc().builder()
-                 //.id("DocId"+generateRandomString())
-                .name("Document"+generateRandomString())
-                .docx("Docx"+generateRandomString())
-                .description("Description"+generateRandomString())
-                .build();
-        doc.setChecksum(doc.getDocx());
-        return doc ;
+
+    private String generateRandomString() {
+        String randomString = UUID.randomUUID().toString();
+        // Extract the first 5 characters from the random string
+        return randomString.substring(0, 6);
     }
-    private String generateRandomString(){  return UUID.randomUUID().toString() ;    }
+
 
 }
