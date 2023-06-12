@@ -1,12 +1,16 @@
 package serv.co.documentservice.controller;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import serv.co.documentservice.model.Doc;
 import serv.co.documentservice.model.DocMetadata;
 import serv.co.documentservice.model.Image;
 import serv.co.documentservice.repository.DocRepository;
-import serv.co.documentservice.model.Doc;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +22,10 @@ import java.util.UUID;
 public class DocController {
     private final DocRepository repository;
     private final MongoTemplate mongoTemplate;
+    private RestTemplate restTemplate;
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
 
     public DocController(DocRepository repository, MongoTemplate mongoTemplate) {
@@ -28,27 +36,26 @@ public class DocController {
     @PostMapping("/create/doc")
     @ResponseStatus(HttpStatus.CREATED)
     public String createDoc() {
+
         Doc doc = Doc.builder()
                 .name("Document" + generateRandomString())
                 .description("Description" + generateRandomString())
+                .docx("docx"+ generateRandomString())
                 .build();
-
+        doc.setChecksum(doc.getDocx());
 
         DocMetadata metadata = new DocMetadata();
         metadata.setDocuName(doc.getName());
-        metadata.setCreationTime(LocalDateTime.now()); // Set the creation time to the current time
-        // Set any additional metadata fields you require
+        metadata.setCreationTime(LocalDateTime.now());
 
         doc.setMetadata(metadata);
 
-        Image image=new Image();
-        image.setId("id"+ generateRandomString());
-        doc.setImage(image);
-
         repository.save(doc);
 
-        return "Document validé";
+        return "Document validated";
     }
+
+
 
     @GetMapping("/print")
      public void printAllDocs() {

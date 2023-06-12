@@ -29,6 +29,7 @@ public class Doc {
 
     private Image image;
 
+
     public void setChecksum(String docx) {
         this.checksum = DigestUtils.sha256Hex(docx);
 }
