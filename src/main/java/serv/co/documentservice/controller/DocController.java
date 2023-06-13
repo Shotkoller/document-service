@@ -50,6 +50,7 @@ public class DocController {
         DocMetadata metadata = new DocMetadata();
         metadata.setDocuName(doc.getName());
         metadata.setCreationTime(LocalDateTime.now());
+        metadata.setCreePar("unknown");
 
         doc.setMetadata(metadata);
 
@@ -113,6 +114,7 @@ public class DocController {
 
         return ResponseEntity.notFound().build();
     }
+    //getchacksumbyname
     @GetMapping("/{id}")
     public Optional<Doc> getDocId(@PathVariable String id){
         return repository.findById(id);
