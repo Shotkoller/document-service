@@ -48,6 +48,7 @@ public class DocController {
         doc.setChecksum(file.getBytes());
 
         DocMetadata metadata = new DocMetadata();
+        metadata.setSize(file.getSize());
         metadata.setDocuName(doc.getName());
         metadata.setCreationTime(LocalDateTime.now());
         metadata.setCreePar("unknown");
@@ -114,7 +115,17 @@ public class DocController {
 
         return ResponseEntity.notFound().build();
     }
-    //getchacksumbyname
+    @GetMapping("/checksum/{name}")
+    public ResponseEntity<String> getChecksumByName(@PathVariable("name") String name) {
+        Optional<Doc> docOptional = repository.findByName(name);
+
+        if (docOptional.isPresent()) {
+            Doc doc = docOptional.get();
+            return ResponseEntity.ok(doc.getChecksum());
+        }
+
+        return ResponseEntity.notFound().build();
+    }
     @GetMapping("/{id}")
     public Optional<Doc> getDocId(@PathVariable String id){
         return repository.findById(id);
