@@ -1,7 +1,10 @@
 package serv.co.documentservice.controller;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,7 +65,54 @@ public class DocController {
          repository.findAll().forEach(System.out::println);
     }
 
+   @GetMapping(path = {"/get/doc/infoJson/{name}"})
+   public Optional<Doc> getDocInfoByName(@PathVariable("name") String name) throws IOException {
+       final Optional<Doc> dbDoc = repository.findByName(name);
 
+       return dbDoc.map(doc -> {
+           byte[] imageBytes = DocBinaryUtility.decompressImage(doc.getDocx());
+
+           String checksum = DigestUtils.sha256Hex(imageBytes);
+           if (checksum.equals(doc.getChecksum())) {
+               System.out.println("Checksum matched for document: " + name);
+           } else {
+               System.out.println("Checksum mismatch for document: " + name);
+           }
+
+           return Doc.builder()
+                   .id(doc.getId())
+                   .name(doc.getName())
+                   .type(doc.getType())
+                   .docx(imageBytes)
+                   .checksum(doc.getChecksum())  // Include checksum field
+                   .description(doc.getDescription())  // Include description field
+                   .metadata(doc.getMetadata())  // Include metadata field
+                   .build();
+       });
+   }
+    @GetMapping(path = {"/get/docx/{name}"})
+    public ResponseEntity<byte[]> getDocx(@PathVariable("name") String name) throws IOException {
+        final Optional<Doc> dbDoc = repository.findByName(name);
+
+        if (dbDoc.isPresent()) {
+            Doc doc = dbDoc.get();
+            byte[] imageBytes = DocBinaryUtility.decompressImage(doc.getDocx());
+
+            String checksum = DigestUtils.sha256Hex(imageBytes);
+            if (checksum.equals(doc.getChecksum())) {
+                System.out.println("Checksum matched for document: " + name);
+            } else {
+                System.out.println("Checksum mismatch for document: " + name);
+            }
+
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.valueOf(doc.getType()))
+                    .body(imageBytes);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
     @GetMapping("/{id}")
     public Optional<Doc> getDocId(@PathVariable String id){
         return repository.findById(id);

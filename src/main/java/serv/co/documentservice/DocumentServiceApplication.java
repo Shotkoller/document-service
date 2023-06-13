@@ -26,6 +26,8 @@ public class DocumentServiceApplication {
           docController.printAllDocs();
           System.out.println("Application started and running !!!!!!!!!!! ");
           System.out.println("Application started and running !!!!!!!!!!! ");
+            docController.getDocx("test.png");
+          docController.getDocInfoByName("test.png");
 
 
           /*LocalDateTime creationTime = LocalDateTime.parse("2023-06-09T15:25:54.384");

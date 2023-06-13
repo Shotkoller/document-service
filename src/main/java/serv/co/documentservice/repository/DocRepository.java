@@ -20,4 +20,6 @@ public interface DocRepository extends MongoRepository<Doc,String> {
     Optional<Doc> findByMetadataCreationTime(LocalDateTime creationTime);
 
     Optional<Doc> findByMetadataDocuName(String docuName);
+
+    Optional<Doc> findByName(String name);
 }
