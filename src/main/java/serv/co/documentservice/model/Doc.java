@@ -23,15 +23,22 @@ public class Doc {
     private String name;
     private String description;
     private DocMetadata metadata;
-    private String docx;
+    private byte[] docx;
+    private String type;
     private String checksum;
 
 
-    private Image image;
+    public byte[] getDocx() {
+        return docx;
+    }
+
+    public void setImage(byte[] docx) {
+        this.docx = docx;
+    }
 
 
-    public void setChecksum(String docx) {
-        this.checksum = DigestUtils.sha256Hex(docx);
+    public void setChecksum(byte[] docxo) {
+        this.checksum = DigestUtils.sha256Hex(docxo);
 }
 
 

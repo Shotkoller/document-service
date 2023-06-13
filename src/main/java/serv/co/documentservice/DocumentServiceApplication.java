@@ -1,6 +1,5 @@
 package serv.co.documentservice;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,8 +9,6 @@ import serv.co.documentservice.connection.MongoConfig;
 import serv.co.documentservice.connection.MyConfiguration;
 import serv.co.documentservice.controller.DocController;
 import serv.co.documentservice.repository.DocRepository;
-
-import java.time.LocalDateTime;
 
 
 @SpringBootApplication
