@@ -37,10 +37,10 @@ public class DocController {
 
     @PostMapping("/create/doc")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createDoc(@RequestParam("docx") MultipartFile file) throws IOException {
+    public String createDoc(@RequestParam("docx") MultipartFile file , @RequestParam("name") String docname) throws IOException {
 
         Doc doc = Doc.builder()
-                .name(file.getOriginalFilename())
+                .name(docname)
                 .type(file.getContentType())
                 .description("Description" + generateRandomString())
                 .build();
@@ -52,6 +52,7 @@ public class DocController {
         metadata.setDocuName(doc.getName());
         metadata.setCreationTime(LocalDateTime.now());
         metadata.setCreePar("unknown");
+        metadata.setNatureDocu(doc.getType());
 
         doc.setMetadata(metadata);
 
