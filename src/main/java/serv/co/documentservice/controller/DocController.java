@@ -37,12 +37,12 @@ public class DocController {
 
     @PostMapping("/create/doc")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createDoc(@RequestParam("docx") MultipartFile file , @RequestParam("name") String docname) throws IOException {
+    public String createDoc(@RequestParam("docx") MultipartFile file , @RequestParam("name") String docname , @RequestParam("description") String docdescrpt) throws IOException {
 
         Doc doc = Doc.builder()
                 .name(docname)
                 .type(file.getContentType())
-                .description("Description" + generateRandomString())
+                .description("Description" + docdescrpt)
                 .build();
         doc.setDocx(DocBinaryUtility.compressImage(file.getBytes()));
         doc.setChecksum(file.getBytes());
@@ -93,6 +93,13 @@ public class DocController {
                    .build();
        });
    }
+
+    @GetMapping("/get/docx")
+    public ResponseEntity<List<Doc>> getAllDocx() {
+        List<Doc> docList = repository.findAll();
+        return ResponseEntity.ok().body(docList);
+    }
+
     @GetMapping(path = {"/get/docx/{name}"})
     public ResponseEntity<byte[]> getDocx(@PathVariable("name") String name) throws IOException {
         final Optional<Doc> dbDoc = repository.findByName(name);
